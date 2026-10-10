@@ -1,0 +1,738 @@
+/* Lola & Antoine — palette from the Figma board */
+:root {
+  --creme: #fbf6ec;
+  --creme-raye: #f8f5f0;
+  --vert: #0e3319;
+  --orange: #e8834b;
+  --framboise: #96204f;
+  --rose: #e4749a;
+  --jaune: #f5d879;
+  --bleu: #aedcea;
+
+  --font-titre: "Anton", "Impact", sans-serif;
+  --font-texte: "Quicksand", system-ui, sans-serif;
+
+  --stripe: 50px;
+  --menu-h: 38px;
+  /* Compact header height once you scroll */
+  --entete-h: clamp(150px, min(19.5vw, 30vh), 280px);
+  /* Screen height: set to the real visible height by site.js (phone toolbars) */
+  --hauteur: 100vh;
+  --bande-h: min(230px, 23vh);
+  --photos-h: min(320px, 23vh);
+  /* Full header on the home screen: what's left above the band and blue bar */
+  --hero-h: calc(var(--hauteur) - var(--bande-h) - var(--photos-h));
+  /* One screen below the compact header */
+  --ecran-h: calc(var(--hauteur) - var(--entete-h));
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--entete-h);
+}
+@supports (height: 100svh) {
+  :root { --hauteur: 100svh; }
+}
+
+body {
+  margin: 0;
+  background: var(--creme);
+  color: var(--vert);
+  font-family: var(--font-texte);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+
+a { color: inherit; }
+
+/* ---------- Header: full on the home screen, compact once you scroll ---------- */
+
+/* Takes the full header's place in the page so the home screen lines up. */
+.entete-espace { height: var(--hero-h); }
+
+.entete {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--hero-h);
+  overflow: hidden;
+  padding: min(36px, 3vh) 24px calc(var(--menu-h) + 24px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bleu) 0 var(--stripe),
+    var(--creme-raye) var(--stripe) calc(var(--stripe) * 2)
+  );
+  /* site.js trims the bottom as you scroll, down to the compact height */
+  clip-path: inset(0 0 var(--rogne, 0px) 0);
+}
+
+/* Elements that travel between the full and compact layouts (moved by site.js) */
+.morph {
+  position: relative;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.morph--logo { width: min(100px, 7vh); }
+.morph--titre { width: min(765px, 90%, 52vh); margin-top: -8px; }
+.morph--infos { margin-top: 8px; will-change: transform, opacity; }
+.morph--nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+}
+
+/* Compact layout guides */
+.compacte {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--entete-h);
+  pointer-events: none;
+}
+.emplacement { position: absolute; visibility: hidden; }
+/* Placed in the left garland's dip by site.js */
+.emplacement--logo { left: 0; top: 0; width: 60px; height: 10px; }
+.emplacement--titre {
+  left: calc(50% - var(--entete-h) * 0.67);
+  top: calc(var(--entete-h) * 0.03);
+  width: calc(var(--entete-h) * 1.34);
+  height: 10px;
+}
+/* Position and size are fitted inside the right garland by site.js */
+.infos-compactes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--vert);
+  font-size: 18px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: opacity;
+}
+.infos-compactes p { margin: 0; }
+.infos-compactes p + p { font-size: 0.78em; }
+.infos-compactes small { font-size: 0.8em; }
+
+/* Thin line under the compact header */
+.entete__bord {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--hero-h) - 2px);
+  height: 2px;
+  background: var(--bleu);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Garland frames shrink with the header (site.js); the images inside animate. */
+.guirlande-cadre {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  width: min(32vw, 458px);
+  pointer-events: none;
+  will-change: transform;
+}
+.guirlande-cadre--gauche { left: 0; transform-origin: 0 0; }
+.guirlande-cadre--droite { right: 0; transform-origin: 100% 0; }
+/* Everything else sits in front of the garlands */
+.morph, .compacte { z-index: 1; }
+
+.guirlande {
+  position: relative;
+  width: 100%;
+  animation: guirlande-entree 1.2s var(--ease) both,
+             guirlande-balance 6s ease-in-out 1.2s infinite alternate;
+}
+.guirlande--gauche { top: -20px; transform-origin: 100% 0; }
+.guirlande--droite { left: 20px; transform-origin: 0 0; animation-delay: 0.15s, 1.35s; }
+
+@keyframes guirlande-entree {
+  from { transform: translateY(-110%) rotate(-4deg); }
+  to   { transform: translateY(0) rotate(0); }
+}
+@keyframes guirlande-balance {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(1.5deg); }
+}
+
+.nuage { width: 100%; }
+.nuage.intro { animation-name: intro, flotte; animation-duration: 0.9s, 4s;
+  animation-delay: calc(var(--i) * 140ms + 300ms), 1.5s;
+  animation-iteration-count: 1, infinite; animation-direction: normal, alternate;
+  animation-timing-function: var(--ease), ease-in-out; }
+
+@keyframes flotte {
+  from { translate: 0 0; }
+  to   { translate: 0 -6px; }
+}
+
+.titre { margin: 0; }
+.titre img { width: 100%; }
+
+.date {
+  font-family: var(--font-titre);
+  color: var(--framboise);
+  font-size: clamp(20px, min(4vw, 4.2vh), 52px);
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+.lieu {
+  font-family: var(--font-titre);
+  color: var(--orange);
+  font-size: clamp(26px, min(5.2vw, 5.2vh), 68px);
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin: 0;
+}
+.region {
+  color: var(--rose);
+  font-size: clamp(15px, min(1.8vw, 2.6vh), 24px);
+  margin: 4px 0 0;
+}
+
+/* Staggered entrance for the header */
+.intro {
+  animation: intro 0.9s var(--ease) both;
+  animation-delay: calc(var(--i) * 140ms + 300ms);
+}
+@keyframes intro {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* ---------- Menu ---------- */
+
+.nav { max-width: 100%; }
+
+.nav__rail {
+  position: relative;
+  display: flex;
+  gap: clamp(8px, 5vw, 72px);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 2px;
+}
+.nav__rail::-webkit-scrollbar { display: none; }
+
+.nav a {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  background: var(--creme);
+  border: 1.5px solid var(--bleu);
+  border-radius: 999px;
+  padding: 2px 18px;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--vert);
+  transition: color 0.35s var(--ease), border-color 0.35s var(--ease), transform 0.2s;
+}
+.nav a:hover { transform: translateY(-2px); }
+.nav a.actif {
+  color: var(--creme);
+  border-color: transparent;
+  background: transparent;
+  font-weight: 700;
+}
+
+/* Green pill that slides to the active link */
+.nav__pastille {
+  position: absolute;
+  z-index: 1;
+  top: 4px;
+  left: 0;
+  height: calc(100% - 8px);
+  width: 0;
+  border-radius: 999px;
+  background: var(--vert);
+  transition: transform 0.5s var(--ease), width 0.5s var(--ease);
+}
+.nav a.actif { z-index: 2; }
+
+/* ---------- RSVP ---------- */
+
+.rsvp {
+  display: inline-block;
+  font-family: var(--font-titre);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--rose);
+  background: var(--creme);
+  border: 2px solid var(--bleu);
+  border-radius: 6px;
+  font-size: 34px;
+  line-height: 1;
+  padding: 8px 22px;
+  transition: transform 0.3s var(--ease), background 0.2s, box-shadow 0.3s;
+}
+.rsvp:hover {
+  transform: rotate(-3deg) scale(1.06);
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(228, 116, 154, 0.25);
+}
+.rsvp--grand { font-size: 64px; padding: 14px 36px; }
+
+/* ---------- Home band ---------- */
+
+.bande {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 24px;
+  padding: 24px 24px 0;
+  height: var(--bande-h);
+}
+.bande .rsvp { align-self: center; }
+.bande .couple { width: min(254px, calc(var(--bande-h) * 1.45)); }
+
+.photos {
+  background: var(--bleu);
+  height: var(--photos-h);
+  display: flex;
+  align-items: center;
+  /* Scrolls sideways: drifts on its own (site.js) and can be swiped/dragged */
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.photos::-webkit-scrollbar { display: none; }
+
+/* A strip of polaroid-style prints */
+.photos__piste {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
+  width: max-content;
+  padding: 0 clamp(7px, 1vw, 14px);
+}
+
+.photos__piste img {
+  height: calc(var(--photos-h) - 30px);
+  width: auto;
+  background: #fff;
+  padding: 4px 4px 12px;
+  border-radius: 2px;
+  box-shadow: 0 4px 12px rgba(14, 51, 25, 0.18);
+  rotate: -2deg;
+  cursor: zoom-in;
+  -webkit-user-drag: none;
+  user-select: none;
+  transition: rotate 0.3s var(--ease), scale 0.3s var(--ease);
+}
+.photos__piste img:nth-child(3n + 2) { rotate: 1.5deg; }
+.photos__piste img:nth-child(3n) { rotate: -0.5deg; }
+.photos__piste img:hover { rotate: 0deg; scale: 1.06; }
+.rsvp--grand { font-size: min(64px, 7vh); }
+/* ---------- Heart couples (moved by site.js as you scroll past) ---------- */
+
+.couple {
+  width: 254px;
+  flex-shrink: 0;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+/* The right-hand couple faces the middle */
+.couple--droite { transform: scaleX(-1); }
+
+/* ---------- Screens: one section + its heart bar fill the viewport ---------- */
+
+.ecran {
+  min-height: var(--ecran-h);
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: min(48px, 4vh) 24px;
+}
+
+.section__corps {
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: min(56px, 5vh) 64px;
+}
+.section__corps--seul { grid-template-columns: 1fr; place-items: center; }
+
+.bloc { text-align: center; }
+
+.bloc h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(26px, min(3.2vw, 5vh), 44px);
+  line-height: 1;
+  margin: 0 0 min(24px, 2.4vh);
+  color: var(--orange);
+}
+.bloc h3 img { height: 45px; width: auto; }
+.bloc--framboise h3 { color: var(--framboise); }
+
+.bloc p {
+  color: var(--orange);
+  font-size: clamp(15px, 2.4vh, 20px);
+  max-width: 34em;
+  margin: 0 auto 0.8em;
+}
+.bloc strong {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.bouton {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-titre);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 24px;
+  color: var(--rose);
+  border: 2px solid var(--rose);
+  border-radius: 4px;
+  padding: 4px 18px;
+  background: #fff;
+  transition: background 0.2s, color 0.2s, transform 0.3s var(--ease);
+}
+.bouton:hover { background: var(--rose); color: #fff; transform: translateY(-2px); }
+
+.a-venir {
+  font-family: "Bangers", var(--font-titre);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--orange);
+  font-size: clamp(36px, 3.4vw, 52px);
+  line-height: 1;
+  margin: 0;
+}
+.bloc .a-venir { font-size: clamp(32px, 3.2vw, 48px); margin-top: 32px; }
+
+.deco { position: absolute; pointer-events: none; }
+.section--deco { position: relative; overflow: hidden; }
+.deco--table {
+  left: 20.8%;
+  bottom: 0;
+  width: min(194px, 18vh);
+}
+.deco--disco {
+  right: 4.6%;
+  top: 0;
+  width: min(161px, 22vh);
+  transform-origin: 50% 0;
+  animation: disco 5s ease-in-out infinite alternate;
+}
+@keyframes disco {
+  from { rotate: -5deg; }
+  to   { rotate: 5deg; }
+}
+
+/* ---------- Scroll reveal ---------- */
+
+/* site.js adds .est-visible when an element scrolls into view. Uses the
+   individual translate/scale/rotate properties so hover transforms still work.
+   --d delays a whole element, --k staggers the pieces inside a block. */
+:root {
+  --rebond: cubic-bezier(0.34, 1.7, 0.5, 1);
+  --pas: 110ms;
+}
+
+.js .reveal {
+  opacity: 0;
+  translate: 0 40px;
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease);
+  transition-delay: var(--d, 0ms);
+}
+.js .reveal.est-visible { opacity: 1; translate: none; }
+
+/* Blocks and "A venir" stay put: their pieces do the moving */
+.js .bloc.reveal,
+.js .a-venir.reveal { opacity: 1; translate: none; }
+
+/* Block icon pops in */
+.js .bloc.reveal h3 img {
+  scale: 0;
+  rotate: -30deg;
+  transition: scale 0.7s var(--rebond), rotate 0.7s var(--rebond);
+  transition-delay: var(--d, 0ms);
+}
+.js .bloc.reveal.est-visible h3 img { scale: 1; rotate: 0deg; }
+
+/* Block title rises out of a hidden line */
+.ligne {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.1em 0;
+  margin: -0.1em 0;
+}
+.ligne > span { display: inline-block; }
+.js .reveal .ligne > span {
+  translate: 0 115%;
+  transition: translate 0.9s var(--ease);
+  transition-delay: calc(var(--d, 0ms) + 120ms);
+}
+.js .reveal.est-visible .ligne > span { translate: none; }
+
+/* Paragraphs come in one after the other, out of a soft blur */
+.js .bloc.reveal > p:not(.a-venir) {
+  opacity: 0;
+  translate: 0 18px;
+  filter: blur(6px);
+  transition: opacity 0.8s var(--ease), translate 0.8s var(--ease), filter 0.8s var(--ease);
+  transition-delay: calc(var(--d, 0ms) + 260ms + var(--k, 0) * var(--pas));
+}
+.js .bloc.reveal.est-visible > p { opacity: 1; translate: none; filter: none; }
+
+/* Buttons pop in last (hover transitions keep no delay) */
+.js .bloc.reveal .bouton {
+  opacity: 0;
+  scale: 0.8;
+  rotate: -4deg;
+  transition: background 0.2s, color 0.2s, transform 0.3s var(--ease),
+              opacity 0.5s var(--ease), scale 0.7s var(--rebond), rotate 0.7s var(--rebond);
+  transition-delay: 0s, 0s, 0s, var(--delai), var(--delai), var(--delai);
+  --delai: calc(var(--d, 0ms) + 320ms + var(--k, 0) * var(--pas));
+}
+.js .bloc.reveal.est-visible .bouton { opacity: 1; scale: 1; rotate: 0deg; }
+
+/* RSVP buttons pop in with a tilt */
+.js .rsvp.reveal {
+  translate: none;
+  scale: 0.6;
+  rotate: -8deg;
+  transition: transform 0.3s var(--ease), background 0.2s, box-shadow 0.3s,
+              opacity 0.5s var(--ease), scale 0.8s var(--rebond), rotate 0.8s var(--rebond);
+  transition-delay: 0s, 0s, 0s, var(--d, 0ms), var(--d, 0ms), var(--d, 0ms);
+}
+.js .rsvp.reveal.est-visible { scale: 1; rotate: 0deg; }
+
+/* "A venir": letters drop in one by one, comic style */
+.lettre { display: inline-block; }
+.js .reveal .lettre {
+  opacity: 0;
+  translate: 0 -0.8em;
+  scale: 1.7;
+  rotate: -14deg;
+  transition: opacity 0.25s ease-out, translate 0.7s var(--rebond),
+              scale 0.7s var(--rebond), rotate 0.7s var(--rebond);
+  transition-delay: calc(var(--d, 0ms) + 200ms + var(--k, 0) * var(--pas) + var(--l) * 55ms);
+}
+.js .reveal .lettre:nth-child(even) { rotate: 12deg; }
+.js .reveal.est-visible .lettre { opacity: 1; translate: none; scale: 1; rotate: 0deg; }
+
+/* Read by screen readers instead of the letter-by-letter spans */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Heart bars between sections ---------- */
+
+.barre {
+  background: var(--bleu);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 24px;
+  padding: 40px 24px 0;
+  overflow: hidden;
+}
+.barre .rsvp { align-self: center; margin-bottom: 16px; font-size: 30px; }
+
+.pied { padding-top: 56px; }
+.pied__centre { align-self: center; text-align: center; padding-bottom: 24px; }
+.pied__centre .rsvp { margin-bottom: 0; }
+.pied__centre p { margin: 12px 0 0; font-weight: 500; }
+
+/* ---------- Photo viewer ---------- */
+
+.visionneuse {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+.visionneuse[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: apparition 0.3s var(--ease);
+}
+.visionneuse::backdrop {
+  background: rgba(14, 51, 25, 0.88);
+}
+@keyframes apparition {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.visionneuse__cadre {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: calc(100vw - 160px);
+}
+.visionneuse__img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 120px);
+  width: auto;
+  height: auto;
+  background: #fff;
+  padding: 10px 10px 34px;
+  border-radius: 3px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.visionneuse__img.change { animation: change-photo 0.35s var(--ease); }
+@keyframes change-photo {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.visionneuse__compte {
+  margin-top: 12px;
+  color: var(--creme);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.visionneuse__fleche,
+.visionneuse__fermer {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--bleu);
+  border-radius: 999px;
+  background: var(--creme);
+  color: var(--vert);
+  font-family: var(--font-texte);
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), background 0.2s;
+}
+.visionneuse__fleche:hover,
+.visionneuse__fermer:hover { background: var(--jaune); transform: scale(1.08); }
+.visionneuse__fleche {
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin-top: -28px;
+  font-size: 40px;
+  padding-bottom: 4px;
+}
+.visionneuse__fleche--prec { left: 24px; }
+.visionneuse__fleche--suiv { right: 24px; }
+.visionneuse__fermer {
+  top: 20px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  font-size: 30px;
+  padding-bottom: 3px;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 720px) {
+  :root { --menu-h: 30px; --entete-h: 124px; --bande-h: min(150px, 20vh); --photos-h: min(230px, 21vh); }
+  body { font-size: 16px; }
+
+  .entete { padding: 24px 16px calc(var(--menu-h) + 20px); }
+  .morph--nav { bottom: 10px; padding: 0 12px; justify-content: flex-start; }
+  .emplacement--titre { left: calc(50% - 70px); top: 14px; width: 140px; }
+  .guirlande-cadre { width: 52vw; }
+  .guirlande--gauche { top: -10px; left: -16px; }
+  .guirlande--droite { left: 16px; top: -10px; }
+  .morph--logo { width: 55px; }
+  .morph--titre { width: 82%; margin-top: 12px; }
+
+  .nav__rail { gap: 6px; }
+  .nav a { font-size: 13px; padding: 2px 10px; }
+
+  .bande { padding-top: 12px; }
+  .bande .couple:last-child { display: none; }
+  .bande .rsvp { display: none; }
+  .couple { width: 186px; }
+
+  .section { padding: 20px 16px; }
+  .section__corps { gap: min(40px, 3vh); }
+  .bloc h3 { font-size: min(30px, 4.4vh); margin-bottom: min(16px, 1.6vh); }
+  .bloc p { font-size: clamp(13px, 2.2vh, 16px); margin-bottom: 0.5em; }
+  .deco--disco { width: 80px; right: 12px; }
+  .deco--table { width: 110px; left: 10%; }
+
+  .barre { padding: 28px 20px 0; gap: 8px; justify-content: space-between; }
+  .barre .couple { width: 104px; }
+  .barre .rsvp { font-size: 24px; padding: 6px 14px; }
+  .pied { padding-top: 32px; }
+
+  .visionneuse__cadre { max-width: calc(100vw - 24px); }
+  .visionneuse__img { max-height: calc(100dvh - 150px); padding: 6px 6px 24px; }
+  .visionneuse__fleche { top: auto; bottom: 22px; margin-top: 0; width: 48px; height: 48px; font-size: 34px; }
+  .visionneuse__fleche--prec { left: calc(50% - 64px); }
+  .visionneuse__fleche--suiv { right: calc(50% - 64px); }
+  .visionneuse__fermer { top: 14px; right: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .js .reveal,
+  .js .reveal * { opacity: 1 !important; translate: none !important; scale: none !important;
+    rotate: none !important; filter: none !important; }
+}
