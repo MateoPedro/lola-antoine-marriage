@@ -453,7 +453,7 @@ function deriver(temps) {
 bandePhotos.addEventListener("mouseenter", () => (survol = true));
 bandePhotos.addEventListener("mouseleave", () => (survol = false));
 bandePhotos.addEventListener("scroll", () => {
-  if (performance.now() < repriseApres || survol) boucler();
+  if (ecranTactile || performance.now() < repriseApres || survol) boucler();
 }, { passive: true });
 
 new IntersectionObserver(([entree]) => {
@@ -545,7 +545,9 @@ function demarrerBande() {
   mesurerBande();
   bandePhotos.scrollLeft = 1;
   position = bandePhotos.scrollLeft;
-  requestAnimationFrame(deriver);
+  // Phones: no drift, people swipe the strip themselves (and the page scrolls
+  // more smoothly without it).
+  if (!ecranTactile) requestAnimationFrame(deriver);
 }
 window.addEventListener("resize", mesurerBande);
 if (document.readyState === "complete") demarrerBande();
