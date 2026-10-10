@@ -234,6 +234,7 @@ function placerEmplacements(geo, largeur) {
 }
 
 function mesurerEntete() {
+  entete.style.transform = "";
   morphs.forEach((m) => (m.el.style.transform = ""));
   guirlandes.forEach((g) => (g.style.transform = ""));
   const hautPlein = entete.offsetHeight;
@@ -270,18 +271,20 @@ function appliquerEntete(y) {
   const { plage, pas, guirlandes: geo } = mesures.entete;
   const rogne = Math.min(Math.max(y, 0), plage);
   const p = rogne / plage;
-  entete.style.setProperty("--rogne", `${rogne}px`);
+  // The header slides up by `rogne` and everything in it slides back down, so
+  // only its bottom edge moves (see styles.css › .entete).
+  entete.style.transform = `translate3d(0, ${-rogne}px, 0)`;
   morphs.forEach((m, i) => {
     const { dx, dy, s } = pas[i];
-    m.el.style.transform = `translate3d(${(dx * p).toFixed(1)}px, ${(dy * p).toFixed(1)}px, 0) scale(${(1 + (s - 1) * p).toFixed(4)})`;
+    m.el.style.transform = `translate3d(${(dx * p).toFixed(1)}px, ${(dy * p + rogne).toFixed(1)}px, 0) scale(${(1 + (s - 1) * p).toFixed(4)})`;
   });
   guirlandes.forEach((g, i) => {
     const { sx, sy } = geo[i];
-    g.style.transform = `scale(${(1 + (sx - 1) * p).toFixed(4)}, ${(1 + (sy - 1) * p).toFixed(4)})`;
+    g.style.transform = `translate3d(0, ${rogne}px, 0) scale(${(1 + (sx - 1) * p).toFixed(4)}, ${(1 + (sy - 1) * p).toFixed(4)})`;
   });
   infosGrandes.style.opacity = zoneDate ? "1" : (1 - borne(p / 0.6)).toFixed(3);
+  // The line sits at the header's bottom edge, so it moves up with it.
   bord.style.opacity = borne((p - 0.8) / 0.2).toFixed(3);
-  bord.style.transform = `translate3d(0, ${-rogne}px, 0)`;
 }
 
 // Layout is measured once (and again on resize), so scrolling itself never
@@ -355,6 +358,8 @@ function jouerScenes(y) {
     // In-place hops follow the scroll itself, so they rest on the ground at the
     // very top of the page and start bouncing as soon as you scroll.
     const surPlace = c.scene === "surPlace";
+    // Phones: the home-screen couple stays still (smoother first scroll).
+    if (surPlace && telephone.matches) return;
     const scene = SCENES[c.scene](surPlace ? y / SAUT_SURPLACE : t);
     // Scenes may set their own sideways sway (as a share of `amplitude`);
     // otherwise the couple walks across.
@@ -394,7 +399,19 @@ function remesurer() {
 }
 
 window.addEventListener("scroll", planifier, { passive: true });
-window.addEventListener("resize", remesurer);
+// Phones: the browser toolbar showing/hiding only changes the height. Don't
+// redo the whole layout mid-scroll for that, just note the new height.
+let largeurMesuree = window.innerWidth;
+window.addEventListener("resize", () => {
+  if (ecranTactile && window.innerWidth === largeurMesuree) {
+    mesures.hauteur = window.innerHeight;
+    mesures.scrollMax = document.documentElement.scrollHeight - mesures.hauteur;
+    planifier();
+    return;
+  }
+  largeurMesuree = window.innerWidth;
+  remesurer();
+});
 window.addEventListener("load", remesurer);
 document.fonts.ready.then(remesurer);
 // Page height can change after load (images, fonts) — re-measure when it does.

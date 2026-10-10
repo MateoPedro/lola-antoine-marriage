@@ -76,8 +76,11 @@ a { color: inherit; }
     var(--bleu) 0 var(--stripe),
     var(--creme-raye) var(--stripe) calc(var(--stripe) * 2)
   );
-  /* site.js trims the bottom as you scroll, down to the compact height */
-  clip-path: inset(0 0 var(--rogne, 0px) 0);
+  /* As you scroll, site.js slides the header up to the compact height and
+     slides its contents back down by the same amount: the stripes are
+     vertical, so the bar looks trimmed from below. (Moving it, rather than
+     clipping it, saves phones from repainting the whole header every frame.) */
+  will-change: transform;
 }
 
 /* Elements that travel between the full and compact layouts (moved by site.js) */
@@ -701,9 +704,11 @@ a { color: inherit; }
   .nav__rail { gap: 6px; }
   .nav a { font-size: 13px; padding: 2px 10px; }
 
-  .bande { padding-top: 12px; }
+  /* One couple, with the RSVP button above it */
+  .bande { flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; padding-top: 12px; }
   .bande .couple:last-child { display: none; }
-  .bande .rsvp { display: none; }
+  .bande .rsvp { order: -1; align-self: center; font-size: 28px; padding: 6px 18px; }
+  .bande .couple { width: calc((var(--bande-h) - 70px) * 1.84); }
   .couple { width: 186px; }
 
   .section { padding: 20px 16px; }
