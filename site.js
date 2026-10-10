@@ -170,12 +170,13 @@ const morphs = [
 // In the compact header the logo sits in the dip of the left garland and the
 // date/location sits above the string of the right garland. These spots are
 // worked out from each garland's drawing (fractions of the image).
-const LOGO = { cx: 0.42, cy: 0.4, h: 0.34, largeur: 0.3, ratio: 101 / 62 };
-const DATE = { gauche: 0.44, droite: 1, haut: 0.04, bas: 0.56 };
+const LOGO = { cx: 0.43, cy: 0.36, h: 0.43, largeur: 0.31, ratio: 101 / 62 };
+const DATE = { gauche: 0.44, droite: 1, haut: 0.03, bas: 0.56 };
 // Phones have less room, so the garlands stretch further, the logo takes more
 // of its garland and the date uses more of the space above the string.
 const telephone = matchMedia("(max-width: 720px)");
-const LOGO_TEL = { ...LOGO, h: 0.5, largeur: 0.44 };
+// (Fractions of the padded phone garlands, see styles.css › Mobile.)
+const LOGO_TEL = { cx: 0.42, cy: 0.4, h: 0.5, largeur: 0.44, ratio: LOGO.ratio };
 const DATE_TEL = { gauche: 0.34, droite: 1, haut: 0, bas: 0.52 };
 // Space the date block lands in (set by placerEmplacements), or null when the
 // compact header has no room for it and it fades out instead.
