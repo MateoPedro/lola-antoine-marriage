@@ -68,24 +68,42 @@ document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el))
 
 // Highlight the section currently on screen and slide the pill to it.
 const rail = document.querySelector(".nav__rail");
-const pastille = document.querySelector(".nav__pastille");
 const liens = [...rail.querySelectorAll("a")];
 const sections = liens.map((a) => document.querySelector(a.hash));
 
+// Phones: a copy of the full header sits at the top of the page and simply
+// scrolls away with it, while the real (fixed) header only slides in as the
+// compact bar once you're past it — nothing follows the finger, so it stays
+// smooth on every phone. See appliquerEntete and styles.css › Mobile.
+const enteteDefile = document.querySelector(".entete").cloneNode(true);
+enteteDefile.classList.add("entete--defile");
+enteteDefile.setAttribute("aria-hidden", "true");
+enteteDefile.querySelectorAll("a").forEach((a) => (a.tabIndex = -1));
+document.querySelector(".entete-espace").append(enteteDefile);
+// Both menus show the current section.
+const rails = [rail, enteteDefile.querySelector(".nav__rail")];
+
 function activer(lien) {
   if (!lien || lien.classList.contains("actif")) return;
-  liens.forEach((a) => a.classList.toggle("actif", a === lien));
+  const i = liens.indexOf(lien);
+  rails.forEach((r) => {
+    const tous = [...r.querySelectorAll("a")];
+    tous.forEach((a, j) => a.classList.toggle("actif", j === i));
+    // Keep the active link visible in the scrollable mobile rail.
+    const gauche = tous[i].offsetLeft - (r.clientWidth - tous[i].offsetWidth) / 2;
+    r.scrollTo({ left: gauche, behavior: "smooth" });
+  });
   placerPastille();
-  // Keep the active link visible in the scrollable mobile rail.
-  const gauche = lien.offsetLeft - (rail.clientWidth - lien.offsetWidth) / 2;
-  rail.scrollTo({ left: gauche, behavior: "smooth" });
 }
 
 function placerPastille() {
-  const lien = rail.querySelector("a.actif");
-  if (!lien) return;
-  pastille.style.width = `${lien.offsetWidth}px`;
-  pastille.style.transform = `translateX(${lien.offsetLeft}px)`;
+  rails.forEach((r) => {
+    const lien = r.querySelector("a.actif");
+    if (!lien) return;
+    const pastille = r.querySelector(".nav__pastille");
+    pastille.style.width = `${lien.offsetWidth}px`;
+    pastille.style.transform = `translateX(${lien.offsetLeft}px)`;
+  });
 }
 
 // Heart couples move as you scroll past their bar: they walk across (left
@@ -136,7 +154,7 @@ const MARGE_BARRE = 8;
 // Header: starts as the full home header and, over the first scroll, shrinks
 // into the compact header. Each piece slides/scales from its full-layout spot
 // to its compact spot (transforms only, so it stays smooth).
-const entete = document.querySelector(".entete");
+const entete = document.querySelector(".entete:not(.entete--defile)");
 const bord = entete.querySelector(".entete__bord");
 const infosGrandes = entete.querySelector(".morph--infos");
 const infosCompactes = entete.querySelector(".infos-compactes");
@@ -234,6 +252,9 @@ function placerEmplacements(geo, largeur) {
 }
 
 function mesurerEntete() {
+  // Measure the header in place, without its phone slide (or any transition).
+  entete.style.transition = "none";
+  entete.classList.add("mesure");
   entete.style.transform = "";
   morphs.forEach((m) => (m.el.style.transform = ""));
   guirlandes.forEach((g) => (g.style.transform = ""));
@@ -264,16 +285,31 @@ function mesurerEntete() {
     const s = b.width / a.width;
     return { dx: b.left - a.left, dy: b.top - a.top, s: s || 1 };
   });
+  entete.classList.remove("mesure");
+  void entete.offsetHeight; // apply the slide back without animating it
+  entete.style.transition = "";
   return { plage: Math.max(hautPlein - hautCompact, 1), hautPlein, pas, guirlandes: geo };
 }
 
 function appliquerEntete(y) {
   const { plage, pas, guirlandes: geo } = mesures.entete;
-  const rogne = Math.min(Math.max(y, 0), plage);
+  let rogne = Math.min(Math.max(y, 0), plage);
+  if (telephone.matches) {
+    // Phones: the compact bar slides in once the full header (the scrolling
+    // copy) is up to its size, and slides away again above it. Its contents
+    // are laid out in their compact spots once; nothing moves with the scroll.
+    entete.classList.toggle("montre", y > plage);
+    if (mesures.entete.pose) return;
+    mesures.entete.pose = true;
+    entete.style.setProperty("--plage", `${plage}px`);
+    rogne = plage;
+  } else {
+    // The header slides up by `rogne` and everything in it slides back down,
+    // so only its bottom edge moves (see styles.css › .entete).
+    entete.classList.remove("montre");
+    entete.style.transform = `translate3d(0, ${-rogne}px, 0)`;
+  }
   const p = rogne / plage;
-  // The header slides up by `rogne` and everything in it slides back down, so
-  // only its bottom edge moves (see styles.css › .entete).
-  entete.style.transform = `translate3d(0, ${-rogne}px, 0)`;
   morphs.forEach((m, i) => {
     const { dx, dy, s } = pas[i];
     m.el.style.transform = `translate3d(${(dx * p).toFixed(1)}px, ${(dy * p + rogne).toFixed(1)}px, 0) scale(${(1 + (s - 1) * p).toFixed(4)})`;
@@ -304,7 +340,7 @@ const ecranTactile = matchMedia("(pointer: coarse)").matches;
 window.addEventListener("resize", () => {
   if (!ecranTactile || window.innerWidth !== largeurVue) fixerHauteur();
 });
-liens.forEach((a) => a.addEventListener("click", fixerHauteur));
+document.querySelectorAll(".nav a").forEach((a) => a.addEventListener("click", fixerHauteur));
 
 function mesurer() {
   const y = window.scrollY;

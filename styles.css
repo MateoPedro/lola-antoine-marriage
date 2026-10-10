@@ -55,7 +55,9 @@ a { color: inherit; }
 /* ---------- Header: full on the home screen, compact once you scroll ---------- */
 
 /* Takes the full header's place in the page so the home screen lines up. */
-.entete-espace { height: var(--hero-h); }
+.entete-espace { position: relative; height: var(--hero-h); }
+/* Phones only: the scrolling copy of the full header (made by site.js) */
+.entete.entete--defile { display: none; }
 
 .entete {
   position: fixed;
@@ -693,6 +695,23 @@ a { color: inherit; }
   body { font-size: 16px; }
 
   .entete { padding: 24px 16px calc(var(--menu-h) + 20px); }
+  /* The full header is a copy that scrolls away with the page; the real one
+     waits above the screen and slides down as the compact bar (site.js adds
+     .montre once you've scrolled past the full header). */
+  .entete {
+    transform: translate3d(0, calc(-100% - 4px), 0);
+    transition: transform 0.4s var(--ease);
+  }
+  .entete.montre { transform: translate3d(0, calc(-1 * var(--plage, 0px)), 0); }
+  .entete.mesure { transform: none; }
+  .entete.entete--defile {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transform: none;
+    transition: none;
+  }
   .morph--nav { bottom: 10px; padding: 0 12px; justify-content: flex-start; }
   .emplacement--titre { left: calc(50% - 70px); top: 14px; width: 140px; }
   .guirlande-cadre { width: 52vw; }
