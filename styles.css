@@ -442,7 +442,7 @@ a { color: inherit; }
   font-family: var(--font-titre);
   text-transform: uppercase;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 27px;
   letter-spacing: 0.02em;
   color: var(--rose);
   /* Framboise outline on the letters, like the RSVP buttons */
@@ -450,7 +450,7 @@ a { color: inherit; }
   paint-order: stroke fill;
   border: 2px solid var(--rose);
   border-radius: 4px;
-  padding: 3px 14px;
+  padding: 5px 20px;
   background: #fff;
   transition: background 0.2s, color 0.2s, transform 0.3s var(--ease);
 }
@@ -731,8 +731,8 @@ a { color: inherit; }
   .morph--nav { bottom: 10px; padding: 0 12px; justify-content: flex-start; }
   .emplacement--titre { left: calc(50% - 70px); top: 14px; width: 140px; }
   .guirlande-cadre { width: 52vw; }
-  .guirlande--gauche { left: -12px; }
-  .guirlande--droite { left: 12px; }
+  .guirlande--gauche { left: -32px; }
+  .guirlande--droite { left: 32px; }
   /* The compact bar keeps its original garlands: the cropped images are
      padded back out to the original drawings' frames (432×256 and 458×247)
      and placed as before. */
@@ -759,6 +759,7 @@ a { color: inherit; }
   .section__corps { gap: min(64px, 7vh); }
   .bloc h3 { font-size: min(30px, 4.4vh); margin-bottom: min(16px, 1.6vh); gap: 4px; }
   .bloc h3 img { height: 36px; }
+  .bouton { font-size: 20px; padding: 3px 14px; }
   .bloc p { font-size: clamp(15px, 2.6vh, 19px); margin-bottom: 0.5em; }
   .deco--disco { width: 80px; right: 12px; }
   .deco--table { width: 110px; left: 10%; }
