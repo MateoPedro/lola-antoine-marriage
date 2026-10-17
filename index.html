@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bubbler+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=25">
+  <link rel="stylesheet" href="styles.css?v=26">
   <link rel="icon" href="assets/nuage.png">
   <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -116,6 +116,14 @@
       </div>
     </section>
 
+    <!-- Welcome note, right below the photo strip (the home screen above fills exactly one screen). -->
+    <section class="bienvenue" aria-label="Bienvenue">
+      <div class="bienvenue__texte reveal">
+        <h2>Bienvenue&nbsp;!</h2>
+        <p>Vous trouverez ci-dessous toutes les informations pratiques pour vous guider avant et pendant le grand jour J. Cette page sera régulièrement enrichie et mise à jour à mesure que la date approche, alors n’hésitez pas à y jeter un œil de temps en temps&nbsp;!</p>
+      </div>
+    </section>
+
     <!-- Each screen = one section + its heart bar, exactly one viewport tall below the menu. -->
     <section class="ecran" id="planning" aria-label="Planning">
       <div class="section section--deco">
@@ -157,15 +165,19 @@
 
     <section class="ecran" id="discours" aria-label="Discours et animations">
       <div class="section">
-        <div class="section__corps">
+        <div class="section__corps section__corps--intro">
+          <p class="section__intro reveal">Nous souhaitons que notre mariage soit un moment de partage et une grande fête&nbsp;! Si le cœur vous en dit, participez aux festivités sous l’une de ces deux formes&nbsp;: dire un mot pendant la cérémonie, ou proposer une animation pour plus tard (cocktail, dîner ou soirée).</p>
           <article class="bloc bloc--framboise reveal">
             <h3><img src="assets/icon-discours.png" alt="">Discours</h3>
-            <p>Si vous souhaitez prendre la parole lors de notre cérémonie laïque, seul ou à plusieurs, merci de vous inscrire via le lien ci-dessous&nbsp;; notre officiant reviendra vers vous.</p>
+            <p>Le déroulé de la cérémonie n’est pas encore arrêté&nbsp;: il y aura sans doute des discours, des lectures, des chants…</p>
+            <p>Vous souhaitez dire un mot, lire un texte, ou vous avez une autre idée&nbsp;? Inscrivez-vous via le lien ci-dessous. Edouard, notre officiant, fera au mieux pour agencer les interventions et harmoniser l’ensemble.</p>
             <a class="bouton" href="#" data-lien="discours">Inscriptions discours</a>
           </article>
           <article class="bloc bloc--framboise reveal" style="--d:150ms">
             <h3><img src="assets/icon-animations.png" alt="">Animations</h3>
-            <p class="a-venir">A venir</p>
+            <p>Nous savons que nos invités sont joueurs, blagueurs, chanteurs, troubadours, sportifs, animateurs… alors nous avons voulu laisser de la place à votre créativité. Ne vous bridez pas, toutes les idées sont bonnes&nbsp;: cela dépend juste de l’heure&nbsp;;)</p>
+            <p>Proposez la vôtre via le lien ci-dessous. Pour nous garder la surprise, nous ne lirons pas les propositions nous-mêmes&nbsp;: une personne de confiance s’en chargera et reviendra vers vous pour coordonner le tout (et mettre un peu d’ordre dans le chaos).</p>
+            <a class="bouton" href="#" data-lien="animations">Proposer une animation</a>
           </article>
         </div>
       </div>
@@ -204,6 +216,6 @@
     <button class="visionneuse__fleche visionneuse__fleche--suiv" type="button" aria-label="Photo suivante">&#8250;</button>
   </dialog>
 
-  <script src="site.js?v=26"></script>
+  <script src="site.js?v=27"></script>
 </body>
 </html>
