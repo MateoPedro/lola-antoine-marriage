@@ -1,7 +1,8 @@
 // Liens à renseigner — les boutons pointent ici une fois remplis.
 const LIENS = {
   rsvp: "https://docs.google.com/forms/d/e/1FAIpQLSe7PIs-t88i8jGPP1B-1nJPP26q-ihaKETPKPu-P9jHLRiQgw/viewform",       // Lien Google Form du RSVP
-  discours: "",   // Lien Google Form des inscriptions aux discours
+  discours: "https://docs.google.com/spreadsheets/d/14ps4kBlgwLOBTEbpBDMaiyShU5X6UUYx-CmHvm-RYdY/edit",   // Tableau des inscriptions aux discours
+  animations: "", // Lien pour proposer une animation
 };
 
 document.querySelectorAll("[data-lien]").forEach((a) => {
