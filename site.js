@@ -1,6 +1,6 @@
 // Liens à renseigner — les boutons pointent ici une fois remplis.
 const LIENS = {
-  rsvp: "",       // Lien Google Form du RSVP
+  rsvp: "https://docs.google.com/forms/d/e/1FAIpQLSe7PIs-t88i8jGPP1B-1nJPP26q-ihaKETPKPu-P9jHLRiQgw/viewform",       // Lien Google Form du RSVP
   discours: "",   // Lien Google Form des inscriptions aux discours
 };
 
