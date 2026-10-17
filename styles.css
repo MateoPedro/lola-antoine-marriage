@@ -365,6 +365,27 @@ a { color: inherit; }
 .photos__piste img:nth-child(3n) { rotate: -0.5deg; }
 .photos__piste img:hover { rotate: 0deg; scale: 1.06; }
 .rsvp--grand { font-size: min(64px, 7vh); }
+
+/* ---------- Welcome note (below the photo strip) ---------- */
+
+.bienvenue { padding: min(80px, 9vh) 24px; text-align: center; }
+.bienvenue__texte { max-width: 44em; margin: 0 auto; }
+.bienvenue h2 {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--framboise);
+  font-size: clamp(30px, min(3.6vw, 5.5vh), 48px);
+  margin: 0 0 min(20px, 2vh);
+}
+.bienvenue p {
+  color: var(--framboise);
+  font-size: clamp(19px, 3vh, 25px);
+  margin: 0 0 0.8em;
+}
+.bienvenue p:last-child { margin-bottom: 0; }
 /* ---------- Heart couples (moved by site.js as you scroll past) ---------- */
 
 .couple {
@@ -402,6 +423,18 @@ a { color: inherit; }
   gap: min(56px, 5vh) 64px;
 }
 .section__corps--seul { grid-template-columns: 1fr; place-items: center; }
+
+/* Shared intro above a section's blocks (Discours & animations). Two fixed
+   columns: with auto-fit, the full-width intro would keep a third, empty one. */
+.section__corps--intro { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.section__intro {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--framboise);
+  font-size: clamp(19px, 3vh, 25px);
+  max-width: 44em;
+  margin: 0 auto;
+}
 
 .bloc { text-align: center; }
 
@@ -752,9 +785,12 @@ a { color: inherit; }
   .bande .couple { width: calc((var(--bande-h) - 70px) * 1.84); }
   .couple { width: 186px; }
 
+  .bienvenue { padding: 44px 16px; }
+  .bienvenue h2 { font-size: 32px; margin-bottom: 14px; }
+  .bienvenue p { font-size: clamp(16px, 2.7vh, 20px); }
   .section { padding: 20px 16px; }
-  /* Discours is shorter than the screen: sit it a bit above the middle */
-  #discours .section { padding-bottom: calc(20px + 12vh); }
+  .section__corps--intro { grid-template-columns: 1fr; }
+  .section__intro { font-size: clamp(16px, 2.7vh, 20px); }
   /* Clear gap between the two blocks of a section */
   .section__corps { gap: min(64px, 7vh); }
   .bloc h3 { font-size: min(30px, 4.4vh); margin-bottom: min(16px, 1.6vh); gap: 4px; }
